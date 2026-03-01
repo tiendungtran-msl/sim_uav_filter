@@ -1,0 +1,24 @@
+============================================================
+  sim_ekf2 — Validation Report
+============================================================
+  Runs:               50
+  Duration per run:   60 s
+
+── NEES ──────────────────────────────────────────────────
+  NEES position:      PASS  (in-bounds 75%  bounds [2.36, 3.72])
+  NEES velocity:      PASS  (in-bounds 51%  bounds [2.36, 3.72])
+
+── Errors ────────────────────────────────────────────────
+  Overall pos RMSE:   0.848 m
+  Overall vel RMSE:   0.224 m/s
+  Diverged runs:      0  (> 50 m pos error)
+
+── Innovation Analysis ───────────────────────────────────
+  GPS zero-mean:      FAIL
+  GPS NIS χ² pass:    99%    (PASS)
+  Baro NIS χ² pass:   99%  (PASS)
+  Whiteness (ACF):    60% lags OK  (PASS)
+
+── Overall ───────────────────────────────────────────────
+  RESULT: ✅ PASS
+============================================================
