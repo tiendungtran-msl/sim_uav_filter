@@ -1,28 +1,44 @@
-# filters/ — Placeholder cho thuật toán lọc (ESKF, EKF, ...)
+# filters/ — Bộ lọc ESKF (C++ Core)
 
-Thư mục này **chưa implement** bất kỳ filter nào.
+Thư mục chứa implementation C++ của Error-State Kalman Filter.
+
+## Cấu trúc
+
+```
+filters/
+├── README.md           ← File này
+├── __init__.py         ← Python package marker
+└── eskf_core_cpp/      ← C++ ESKF implementation
+    ├── CMakeLists.txt
+    ├── README.md       ← Hướng dẫn build & sử dụng chi tiết
+    ├── include/eskf/   ← Header files (API)
+    ├── src/            ← Implementation
+    ├── tools/          ← Replay & benchmark executables
+    ├── tests/          ← Unit tests
+    └── cmake/          ← CMake modules
+```
 
 ## Quy tắc kiến trúc
-- `filters/` **KHÔNG ĐƯỢC import** bất kỳ module nào từ `sim/`.
-- `sim/` **KHÔNG ĐƯỢC import** bất kỳ module nào từ `filters/`.
-- Hai module giao tiếp thông qua `SimFrame` (định nghĩa trong `sim/io/schema.py`).
 
-## Cách "cắm" filter vào simulator
-1. **Realtime**: subscribe `SimFrame` từ simulator loop.
-2. **Offline**: đọc file CSV log (xem `sim/io/logger_csv.py`).
+- `filters/` **KHÔNG ĐƯỢC import** bất kỳ module nào từ `sim/` hay `gui/`
+- `sim/` và `gui/` **KHÔNG ĐƯỢC import** bất kỳ module nào từ `filters/`
+- Giao tiếp qua file CSV (sensor_log.csv → ESKF → estimated.csv + innovations.csv)
 
-## Ví dụ (TODO khi implement)
-```python
-from sim.io.schema import SimFrame
+## Thiết kế
 
-class ESKF:
-    def process_frame(self, frame: SimFrame):
-        # IMU predict
-        self.imu_update(frame.imu.accel, frame.imu.gyro)
-        # GPS update (nếu có)
-        if frame.gps is not None and frame.gps.valid:
-            self.gps_update(frame.gps.pos_ned, frame.gps.vel_ned)
-        # Baro update (nếu có)
-        if frame.baro is not None and frame.baro.valid:
-            self.baro_update(frame.baro.alt_m)
-```
+- **Embedded-portable**: Không dùng heap, exceptions, STL containers
+- **C++17**: Chỉ dùng `constexpr`, static allocation
+- **Joseph form**: Covariance update `P = (I-KH)P(I-KH)^T + KRK^T` — numerically stable
+- **Chi-square gating**: Reject outlier measurements
+- **Delay compensation**: PX4-style rollback/update/re-propagate cho GPS delay
+
+## Benchmark
+
+| Metric | Value |
+|--------|-------|
+| Predict (IMU) | ~3 µs/step |
+| GPS update (6D + delay comp) | ~250 µs |
+| Throughput | ~71,000 steps/s |
+| RMSE Position | ~3.0 m |
+| RMSE Velocity | ~0.12 m/s |
+| RMSE Attitude | ~1.3° |

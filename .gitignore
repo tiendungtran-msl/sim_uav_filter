@@ -22,6 +22,7 @@ CMakeFiles/
 cmake_install.cmake
 Makefile
 ekf2_core/build/
+filters/eskf_core_cpp/build/
 
 # ======================== IDE / Editor ==================
 .vscode/
@@ -34,8 +35,11 @@ ekf2_core/build/
 # ======================== Outputs / Logs ================
 outputs/
 logs/
-*.csv
 *.html
+
+# CSV — ignore generated CSVs except examples
+*.csv
+!data/examples/*.csv
 
 # ======================== Misc ==========================
 *.log
