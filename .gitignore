@@ -1,0 +1,42 @@
+# ======================== Python ========================
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.so
+.venv/
+venv/
+env/
+.eggs/
+
+# ======================== C++ / CMake ===================
+*.o
+*.d
+*.a
+*.out
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+ekf2_core/build/
+
+# ======================== IDE / Editor ==================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ======================== Outputs / Logs ================
+outputs/
+logs/
+*.csv
+*.html
+
+# ======================== Misc ==========================
+*.log
+.env
